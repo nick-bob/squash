@@ -1,0 +1,24 @@
+services:
+  squash:
+    container_name: squash
+    build: .
+    ports:
+      - "8080:8080"
+    networks:
+      - app
+  postgres:
+    container_name: postgres
+    image: docker.io/bitnami/postgresql:14
+    volumes:
+      - 'postgres_data:/data'
+    ports:
+      - '5432:5432'
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
+volumes:
+  postgres_data:
+    driver: local
