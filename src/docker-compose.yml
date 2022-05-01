@@ -2,15 +2,23 @@ services:
   squash:
     container_name: squash
     build: .
+    environment:
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
     ports:
       - "8080:8080"
     networks:
       - app
+    depends_on:
+      - postgres
   postgres:
     container_name: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
     image: docker.io/bitnami/postgresql:14
     volumes:
-      - 'postgres_data:/data'
+      - 'postgres_data:/bitnami/postgresql'
     ports:
       - '5432:5432'
     networks:
