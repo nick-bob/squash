@@ -1,7 +1,10 @@
 package v1
 
 import (
+	"context"
+	"database/sql"
 	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 	"math/rand"
 	"net/http"
 	"strings"
@@ -9,59 +12,62 @@ import (
 )
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+var squashLength = 9
 
 type SquashLink struct {
-	sId   string
-	sLink string
-	url   string
+	id           int
+	original_url string
+	squash_id    string
 }
 
-func Start(hostname string) {
+func Start(ctx context.Context) {
+	connStr := ctx.Value("dbConnStr").(string)
+	hostname := ctx.Value("hostname").(string)
+
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
 	rand.Seed(time.Now().UnixNano())
-	var links []SquashLink
 
 	r := gin.Default()
 
 	r.POST("/newurl", func(c *gin.Context) {
-		squashId := randSeq(9)
+		squashId := randSeq(squashLength)
 
 		link := SquashLink{
-			sId:   squashId,
-			sLink: strings.Join([]string{hostname, squashId}, "/"),
-			url:   c.PostForm("url"),
+			squash_id:    squashId,
+			original_url: strings.ToLower(c.PostForm("url")),
 		}
-		links = append(links, link)
+		_, err = db.Exec("insert into squash_link (original_url, squash_id) values ($1, $2)", link.original_url, link.squash_id)
+		if err != nil {
+			panic(err)
+		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"url":   link.url,
-			"sLink": link.sLink,
-			"sId":   link.sId,
+			"url":       link.original_url,
+			"sLink":     strings.Join([]string{hostname, squashId}, "/"),
+			"squash_id": link.squash_id,
 		})
 	})
 
 	r.GET("/:squashLink", func(c *gin.Context) {
 		squashId := c.Param("squashLink")
-		found := false
-
-		for i := 0; i < len(links); i++ {
-			sLink := links[i]
-			if sLink.sId == squashId {
-				c.Redirect(http.StatusNotModified, sLink.url)
-				found = true
-				break
-			}
+		var link SquashLink
+		err := db.QueryRow("select * from squash_link where squash_id = $1", squashId).Scan(&link.id, &link.original_url, &link.squash_id)
+		if err != nil {
+			panic(err)
 		}
-		if !found {
-			c.JSON(http.StatusNotFound, gin.H{
-				"Error": "Squash not found",
-			})
-		}
+		c.JSON(http.StatusOK, gin.H{
+			"url": link.original_url,
+		})
 	})
 
 	r.Run(":8080")
 }
 
-// shamelessly taken from: https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go/22892986#22892986
 func randSeq(n int) string {
 	b := make([]rune, n)
 	for i := range b {
