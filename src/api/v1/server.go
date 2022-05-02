@@ -3,12 +3,13 @@ package v1
 import (
 	"context"
 	"database/sql"
-	"github.com/gin-gonic/gin"
-	_ "github.com/lib/pq"
 	"math/rand"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 )
 
 var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")

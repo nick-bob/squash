@@ -4,10 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
+
 	"github.com/GuiaBolso/darwin"
 	_ "github.com/lib/pq"
-	"log"
-	// "os"
+
+	_ "os"
 	api "squash/api/v1"
 	_ "testing"
 	"time"
