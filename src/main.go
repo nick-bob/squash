@@ -39,7 +39,7 @@ func main() {
 	// connStr := fmt.Sprintf("user=%s password=%s host=%s port=5432 sslmode=disable", dbUser, dbPassowrd, dbHost)
 	// "postgres://username:password@localhost:5432/database_name"
 	connStr := fmt.Sprintf("postgres://postgres:postgres@postgres:5432/postgres?sslmode=disable")
-	time.Sleep(2 * time.Second)
+	time.Sleep(5 * time.Second)
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {

@@ -48,9 +48,9 @@ func Start(ctx context.Context) {
 		}
 
 		c.JSON(http.StatusOK, gin.H{
-			"url":       link.original_url,
-			"sLink":     strings.Join([]string{hostname, squashId}, "/"),
-			"squash_id": link.squash_id,
+			"original":    link.original_url,
+			"squash_link": strings.Join([]string{hostname, squashId}, "/"),
+			"squash_id":   link.squash_id,
 		})
 	})
 
@@ -61,9 +61,7 @@ func Start(ctx context.Context) {
 		if err != nil {
 			panic(err)
 		}
-		c.JSON(http.StatusOK, gin.H{
-			"url": link.original_url,
-		})
+		c.Redirect(http.StatusMovedPermanently, link.original_url)
 	})
 
 	r.Run(":8080")
