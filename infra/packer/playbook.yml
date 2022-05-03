@@ -5,8 +5,8 @@
   become: true
 
   tasks:
-    - name: install Apache
-      apt:
-        name: apache2
+    - name: Install Docker
+      yum:
+        name: docker
         update_cache: yes
         state: present

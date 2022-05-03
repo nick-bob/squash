@@ -1,9 +1,5 @@
-output "vpc" {
-  value = module.network.vpc
-}
-
-output "private_subnets" {
-  value = module.network.private_subnet_ids
+output "network" {
+  value = module.network
 }
 
 output "bastion" {
