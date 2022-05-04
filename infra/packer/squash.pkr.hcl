@@ -8,15 +8,15 @@ packer {
 }
 
 source "amazon-ebs" "squash_app" {
-  ami_name                     = var.app_name
+  ami_name                     = "${var.app_name}-${uuidv4()}"
   instance_type                = "t3.micro"
   region                       = var.region
   vpc_id                       = var.vpc
   subnet_id                    = var.subnet
-  ssh_bastion_host             = var.bastion_host
+  ssh_bastion_host             = var.bastion_ip
   ssh_bastion_username         = var.bastion_username
   ssh_username                 = var.builder_username
-  ssh_bastion_private_key_file = "../id_rsa"
+  ssh_bastion_private_key_file = "id_rsa"
   source_ami_filter {
     most_recent = true
     owners      = ["137112412989"]
@@ -37,12 +37,17 @@ build {
     "source.amazon-ebs.squash_app"
   ]
   provisioner "file" {
-    source      = "squash_image.tgz"
+    source      = "squash.tgz"
     destination = "/tmp/app.tar.gz"
   }
-  provisioner "ansible" {
-    playbook_file           = "./playbook.yml"
-    ssh_authorized_key_file = "../id_rsa.pub"
-    ansible_ssh_extra_args  = ["-o StrictHostKeyChecking=no -o ForwardAgent=yes -o ControlMaster=auto -o ControlPersist=60s -o ProxyCommand='ssh -i ~/.ssh/id_rsa -W %h:%p ubuntu@3.231.24.255'"]
+  provisioner "shell" {
+    inline = [
+      "sudo yum update && sudo yum install docker -y",
+      "sudo systemctl enable docker.service && sudo systemctl start docker.service",
+      "sudo docker load < /tmp/app.tar.gz",
+      "sudo docker run -d -p 8080:8080 --restart unless-stopped nick-bob/squash:latest",
+      ""
+    ]
   }
+
 }

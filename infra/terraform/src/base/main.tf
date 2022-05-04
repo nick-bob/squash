@@ -65,3 +65,30 @@ module "bastion" {
   ssh_key             = module.ssh_key.key_pair.key_name
   associate_public_ip = true
 }
+
+module "db" {
+  source = "../../modules/db"
+  db_name = "squash_db"
+  username = "postgres"
+  subnets = module.network.private_subnet_ids
+  default_tags = local.default_tags
+  security_group_ids = [module.network.db_sg_id]
+}
+
+resource "aws_ssm_parameter" "DB_USER" {
+  name  = "SQUASH_DB_USER"
+  type  = "String"
+  value = "postgres"
+}
+
+resource "aws_ssm_parameter" "DB_PASSWORD" {
+  name  = "SQUASH_DB_PASSWORD"
+  type  = "String"
+  value = module.db.password
+}
+
+resource "aws_ssm_parameter" "DB_HOST" {
+  name  = "SQUASH_DB_HOST"
+  type  = "String"
+  value = module.db.db[0].address
+}

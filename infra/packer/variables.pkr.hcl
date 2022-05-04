@@ -10,17 +10,17 @@ variable "region" {
 
 variable "vpc" {
   type = string
-  default = "vpc-01e26a7ad7fc4b948"
+  default = "vpc-08092cc1663b9636d"
 }
 
 variable "subnet" {
   type = string
-  default = "subnet-0f41e4b400498dc10"
+  default = "subnet-072972674f8dcaaec"
 }
 
-variable "bastion_host" {
+variable "bastion_ip" {
   type = string
-  default = "3.231.24.255"
+  default = "3.231.50.253"
 }
 
 variable "bastion_username" {
