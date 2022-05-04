@@ -27,14 +27,14 @@ variable "public_subnets" {
   default = []
 }
 
-variable "app_lb_sg_id" {
-  type    = string
-  default = ""
+variable "app_security_group_ids" {
+  type    = list(string)
+  default = []
 }
 
-variable "app_sg_id" {
-  type    = string
-  default = null
+variable "app_lb_sg_ids" {
+  type    = list(string)
+  default = []
 }
 
 variable "create_alb" {

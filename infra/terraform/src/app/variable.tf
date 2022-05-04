@@ -5,7 +5,7 @@ variable "default_tags" {
   }
 }
 
-variable "cidr_whitelist"  {
-    type = list(string)
-    default = ["0.0.0.0/0"]
+variable "cidr_whitelist" {
+  type    = list(string)
+  default = ["0.0.0.0/0"]
 }

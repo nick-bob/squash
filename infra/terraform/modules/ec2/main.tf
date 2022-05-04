@@ -36,7 +36,7 @@ resource "aws_instance" "app" {
   ami                         = data.aws_ami.app.id
   instance_type               = var.instance_type
   subnet_id                   = var.subnet_id
-  vpc_security_group_ids      = [aws_security_group.this.id]
+  vpc_security_group_ids      = var.app_security_group_ids
   key_name                    = var.ssh_key
   associate_public_ip_address = var.associate_public_ip
 
@@ -79,6 +79,6 @@ resource "aws_lb" "app" {
   count              = var.create_alb ? 1 : 0
   name               = "${var.app_name}-alb"
   load_balancer_type = "application"
-  security_groups    = [var.app_lb_sg_id]
+  security_groups    = var.app_lb_sg_ids
   subnets            = var.public_subnets
 }

@@ -67,11 +67,11 @@ module "bastion" {
 }
 
 module "db" {
-  source = "../../modules/db"
-  db_name = "squash_db"
-  username = "postgres"
-  subnets = module.network.private_subnet_ids
-  default_tags = local.default_tags
+  source             = "../../modules/db"
+  db_name            = "squash_db"
+  username           = "postgres"
+  subnets            = module.network.private_subnet_ids
+  default_tags       = local.default_tags
   security_group_ids = [module.network.db_sg_id]
 }
 

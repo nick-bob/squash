@@ -35,3 +35,7 @@ variable "cidr_whitelist" {
   type    = list(string)
   default = ["0.0.0.0/0"]
 }
+
+variable "associate_public_ip" {
+  default = false
+}

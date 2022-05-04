@@ -1,3 +1,3 @@
 output "app" {
-    value = module.app
+  value = module.app
 }
