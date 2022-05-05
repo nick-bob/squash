@@ -63,7 +63,7 @@ variable "security_group_rules" {
 }
 
 variable "iam_role" {
-  type = string
+  type        = string
   description = "Role to associate with ec2 instance"
-  default = null
+  default     = null
 }

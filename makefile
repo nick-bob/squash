@@ -5,6 +5,10 @@ docker: ## Build docker container
 	mv squash.tgz ../infra/packer
 
 .PHONY:
+local: docker ## Run application locally
+	cd app && docker-compose up
+
+.PHONY:
 build_infra: ## Build AWS infra via terraform
 	cd infra/terraform/src/base && \
 	terraform init && terraform apply -auto-approve && \
@@ -16,12 +20,13 @@ ami: docker build_infra ## Build AWS AMI via packer
 	packer init . && packer build .
 
 .PHONY:
-app: ami ## Deploy Squash App
-	cd infra/terraform/src/app && terraform init && terraform apply -auto-approve
+asg: ami ## Deploy Squash App
+	cd infra/terraform/src/asg && terraform init && terraform apply -auto-approve
 
 .PHONY:
 clean: ## Destroy AWS infra via terraform
 	cd infra/terraform/src/app && terraform init && terraform destroy -auto-approve && \
+	cd ../asg && terraform init && terraform destroy -auto-approve && \
 	cd ../base && terraform init && terraform destroy -auto-approve
 
 help:           ## Show this help.

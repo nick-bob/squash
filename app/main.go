@@ -76,7 +76,7 @@ func connectDbBySSM(svc *ssm.SSM) (*sql.DB, string) {
 }
 
 func fetchSSMParam(svc *ssm.SSM, key string) string {
-	fmt.Sprintln("Retrieving $1 from SSM", key)
+	log.Println(fmt.Sprintln("Retrieving $1 from SSM", key))
 	param, err := svc.GetParameter(&ssm.GetParameterInput{
 		Name:           aws.String(key),
 		WithDecryption: aws.Bool(false),
@@ -99,6 +99,7 @@ func migrate(db *sql.DB) {
 
 func main() {
 	var connStr, hostname string
+	var db *sql.DB
 
 	_, envVarsEnabled := os.LookupEnv("DB_HOST")
 	if envVarsEnabled {
@@ -124,5 +125,5 @@ func main() {
 	ctx = context.WithValue(ctx, "hostname", hostname)
 	ctx = context.WithValue(ctx, "dbConnStr", connStr)
 
-	api.Start(ctx)
+	api.Start(db, ctx)
 }

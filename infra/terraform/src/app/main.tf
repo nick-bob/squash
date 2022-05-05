@@ -50,7 +50,7 @@ resource "aws_iam_instance_profile" "squash" {
 resource "aws_ssm_parameter" "DB_USER" {
   name  = "SQUASH_HOSTNAME"
   type  = "String"
-  value = "http://${module.app.app_alb[0].dns_name}"
+  value = "module.app.app_alb[0].dns_name"
 }
 
 module "app" {

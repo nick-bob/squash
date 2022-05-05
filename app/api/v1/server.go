@@ -21,15 +21,8 @@ type SquashLink struct {
 	squash_id    string
 }
 
-func Start(ctx context.Context) {
-	connStr := ctx.Value("dbConnStr").(string)
+func Start(db *sql.DB, ctx context.Context) {
 	hostname := ctx.Value("hostname").(string)
-
-	db, err := sql.Open("postgres", connStr)
-	if err != nil {
-		panic(err)
-	}
-	defer db.Close()
 
 	rand.Seed(time.Now().UnixNano())
 
@@ -48,7 +41,7 @@ func Start(ctx context.Context) {
 			squash_id:    squashId,
 			original_url: strings.ToLower(c.PostForm("url")),
 		}
-		_, err = db.Exec("insert into squash_link (original_url, squash_id) values ($1, $2)", link.original_url, link.squash_id)
+		_, err := db.Exec("insert into squash_link (original_url, squash_id) values ($1, $2)", link.original_url, link.squash_id)
 		if err != nil {
 			panic(err)
 		}
