@@ -6,7 +6,15 @@ Then n number of other endpoints to redirect shortened urls.
 
 For full requirements, see [specs](spec.md).
 
-## How to build
+## Prerequisites
+
+* jq
+* terraform
+* packer
+* aws cli
+* docker
+
+## How to Deploy infrastructure
 
 ```
 make asg
