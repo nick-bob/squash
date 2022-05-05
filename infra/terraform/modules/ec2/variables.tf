@@ -61,3 +61,9 @@ variable "security_group_rules" {
   type    = map(any)
   default = {}
 }
+
+variable "iam_role" {
+  type = string
+  description = "Role to associate with ec2 instance"
+  default = null
+}

@@ -45,9 +45,7 @@ build {
       "sudo yum update && sudo yum install docker -y",
       "sudo systemctl enable docker.service && sudo systemctl start docker.service",
       "sudo docker load < /tmp/app.tar.gz",
-      "sudo docker run -d -p 8080:8080 --restart unless-stopped nick-bob/squash:latest",
-      ""
+      "sudo docker run -d -p 80:80 --restart unless-stopped nick-bob/squash:latest",
     ]
   }
-
 }

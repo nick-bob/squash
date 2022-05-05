@@ -40,30 +40,13 @@ module "network" {
 module "bastion" {
   source = "../../modules/ec2"
 
-  app_name     = "bastion"
-  subnet_id    = element(module.network.public_subnet_ids, 0)
-  default_tags = var.default_tags
-  vpc_id       = module.network.vpc_id
-  security_group_rules = {
-    ssh = {
-      "type"        = "ingress"
-      "description" = "Open SSH to home ip"
-      "from_port"   = 22
-      "to_port"     = 22
-      "protocol"    = "tcp"
-      "cidr_blocks" = var.cidr_whitelist
-    },
-    outbound = {
-      "type"        = "egress"
-      "description" = "Open up outbound"
-      "from_port"   = 0
-      "to_port"     = 0
-      "protocol"    = "-1"
-      "cidr_blocks" = ["0.0.0.0/0"]
-    }
-  }
-  ssh_key             = module.ssh_key.key_pair.key_name
-  associate_public_ip = true
+  app_name               = "bastion"
+  subnet_id              = element(module.network.public_subnet_ids, 0)
+  default_tags           = var.default_tags
+  vpc_id                 = module.network.vpc_id
+  app_security_group_ids = [module.network.bastion_sg.id]
+  ssh_key                = module.ssh_key.key_pair.key_name
+  associate_public_ip    = true
 }
 
 module "db" {

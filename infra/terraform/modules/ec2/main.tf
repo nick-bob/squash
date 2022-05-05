@@ -39,6 +39,7 @@ resource "aws_instance" "app" {
   vpc_security_group_ids      = var.app_security_group_ids
   key_name                    = var.ssh_key
   associate_public_ip_address = var.associate_public_ip
+  iam_instance_profile        = var.iam_role
 
   root_block_device {
     encrypted = true

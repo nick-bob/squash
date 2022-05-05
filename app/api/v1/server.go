@@ -35,6 +35,12 @@ func Start(ctx context.Context) {
 
 	r := gin.Default()
 
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"status": "up",
+		})
+	})
+
 	r.POST("/newurl", func(c *gin.Context) {
 		squashId := randSeq(squashLength)
 
@@ -64,7 +70,7 @@ func Start(ctx context.Context) {
 		c.Redirect(http.StatusMovedPermanently, link.original_url)
 	})
 
-	r.Run(":8080")
+	r.Run(":80")
 }
 
 func randSeq(n int) string {

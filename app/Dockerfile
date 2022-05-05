@@ -10,5 +10,5 @@ FROM golang:1.18.1-alpine
 COPY --from=builder /go/bin/squash /
 
 STOPSIGNAL SIGTERM
-EXPOSE 8080
+EXPOSE 80
 ENTRYPOINT ["/squash"]

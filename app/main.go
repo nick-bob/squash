@@ -46,7 +46,6 @@ func connectDbByEnv() (*sql.DB, string) {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
@@ -54,17 +53,6 @@ func connectDbByEnv() (*sql.DB, string) {
 	}
 	fmt.Println("Connection made")
 	return db, connStr
-}
-
-func fetchSSMParam(svc *ssm.SSM, key string) string {
-	param, err := svc.GetParameter(&ssm.GetParameterInput{
-		Name:           aws.String(key),
-		WithDecryption: aws.Bool(false),
-	})
-	if err != nil {
-		panic(err)
-	}
-	return *param.Parameter.Value
 }
 
 func connectDbBySSM(svc *ssm.SSM) (*sql.DB, string) {
@@ -78,7 +66,6 @@ func connectDbBySSM(svc *ssm.SSM) (*sql.DB, string) {
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
@@ -86,6 +73,18 @@ func connectDbBySSM(svc *ssm.SSM) (*sql.DB, string) {
 	}
 	fmt.Println("Connection made")
 	return db, connStr
+}
+
+func fetchSSMParam(svc *ssm.SSM, key string) string {
+	fmt.Sprintln("Retrieving $1 from SSM", key)
+	param, err := svc.GetParameter(&ssm.GetParameterInput{
+		Name:           aws.String(key),
+		WithDecryption: aws.Bool(false),
+	})
+	if err != nil {
+		panic(err)
+	}
+	return *param.Parameter.Value
 }
 
 func migrate(db *sql.DB) {
@@ -99,7 +98,6 @@ func migrate(db *sql.DB) {
 }
 
 func main() {
-	var db *sql.DB
 	var connStr, hostname string
 
 	_, envVarsEnabled := os.LookupEnv("DB_HOST")
@@ -125,7 +123,6 @@ func main() {
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, "hostname", hostname)
 	ctx = context.WithValue(ctx, "dbConnStr", connStr)
-	db.Close()
 
 	api.Start(ctx)
 }

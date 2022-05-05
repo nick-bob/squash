@@ -26,6 +26,10 @@ output "db_sg_id" {
   value = aws_security_group.db.id
 }
 
+output "bastion_sg" {
+  value = aws_security_group.bastion
+}
+
 output "vpc" {
   value = aws_vpc.main
 }

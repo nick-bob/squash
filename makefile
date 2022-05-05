@@ -16,7 +16,7 @@ ami: docker build_infra ## Build AWS AMI via packer
 	packer init . && packer build .
 
 .PHONY:
-deploy_app: ami ## Deploy Squash App
+app: ami ## Deploy Squash App
 	cd infra/terraform/src/app && terraform init && terraform apply -auto-approve
 
 .PHONY:

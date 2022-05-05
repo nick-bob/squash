@@ -105,6 +105,43 @@ resource "aws_route_table_association" "private" {
   route_table_id = aws_route_table.private.id
 }
 
+resource "aws_security_group" "bastion" {
+  name        = "bastion-sg"
+  description = "Security Group for bastion host"
+  vpc_id      = aws_vpc.main.id
+
+  egress = [
+    {
+      description      = "Outbound traffic for ingress"
+      prefix_list_ids  = null
+      security_groups  = null
+      self             = null
+      from_port        = 0
+      to_port          = 0
+      protocol         = "-1"
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
+    }
+  ]
+  ingress = [
+    {
+      description      = "Open SSH"
+      prefix_list_ids  = null
+      security_groups  = null
+      self             = null
+      from_port        = 22
+      to_port          = 22
+      protocol         = "TCP"
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
+    }
+  ]
+
+  tags = merge(var.default_tags, {
+    "Name" : "app-sg"
+  })
+}
+
 resource "aws_security_group" "app" {
   name        = "app-sg"
   description = "Security Group for web applications"
@@ -164,6 +201,15 @@ resource "aws_security_group_rule" "app-to-db-ing" {
   protocol                 = "tcp"
   security_group_id        = aws_security_group.db.id
   source_security_group_id = aws_security_group.app.id
+}
+
+resource "aws_security_group_rule" "bastion-to-app" {
+  type                     = "ingress"
+  to_port                  = 22
+  from_port                = 22
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.app.id
+  source_security_group_id = aws_security_group.bastion.id
 }
 
 resource "aws_security_group_rule" "db-to-app-ing" {
