@@ -22,6 +22,8 @@ make asg
 
 ## Design Considerations
 
+NOTE: Given the time constraints, I wasn't able to implement all the planned work. I wanted to also use AWS Cloudfront, so that the content delivery network could help take the load off the applications.
+
 In order to give users the best experience & to keep the application as highly available as possible, Squash will lean heavily on [AWS Cloudfront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html). The reason is twofold; since Cloudfront will cache static responses on edge locations, responses will be faster once Cloudfront caches the data. Additionally this will lessen the load on the backend servers as well, since the Cloudfront edge locations will be able to help serve the traffic.
 
 [more to come...](infra/README.md)
