@@ -8,26 +8,41 @@ For full requirements, see [specs](spec.md).
 
 ## Prerequisites
 
-* jq
-* terraform
-* packer
+* (terraform)[https://www.terraform.io/downloads]
+* (docker)[https://docs.docker.com/get-docker/]
+* (jq)[https://stedolan.github.io/jq/download/]
+* make
+* (packer)[https://www.packer.io/downloads]
 * aws cli
-* docker
 
-## How to Deploy infrastructure
+## Assumptions
+
+The application assumes that it is being deployed into the us-east-1 region. Future improvements can be made to make everything a bit more agnostic to the AWS region.
+
+## Building with Make
+
+Make is used to tie everything together to make the deployment process easier. Normally I would use some CICD tool to tie everything together. But I felt make worked pretty well for this project.
+
+Quickstart!
+
+Before proceeding, make sure you have all the dependencies installed. And that your current AWS profile has the `us-east-1` region set.
 
 ```
 make asg
 ```
 
-## Design Considerations
+This command will tie everything together. From building the docker image, to building an AWS AMI out of it, to deploying it into an ASG. To see the other options run `make help`.
 
-NOTE: Given the time constraints, I wasn't able to implement all the planned work. I wanted to also use AWS Cloudfront, so that the content delivery network could help take the load off the applications.
+## Infrastructure Design Considerations
 
-In order to give users the best experience & to keep the application as highly available as possible, Squash will lean heavily on [AWS Cloudfront](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Introduction.html). The reason is twofold; since Cloudfront will cache static responses on edge locations, responses will be faster once Cloudfront caches the data. Additionally this will lessen the load on the backend servers as well, since the Cloudfront edge locations will be able to help serve the traffic.
+Squash will be deployed into an AWS ASG, with some basic configurations to scale the instances based off of CPU Utilization. 
 
-[more to come...](infra/README.md)
+Squash will also use a Postgres server hosted by RDS, to store/retrieve records. AWS Parameter store is used to store environment based configurations. For now this mostly means the rds hostname, username, 
 
-## Running locally
+The ASG will be sitting behind an Application load balancer. With the load balancer and ASG distributing load across 3 availability zones.
 
-See the [webserver readme](src/README.md) 
+I think AWS CloudFront will be another big addition. I have not worked this integration in yet. Cloudfront can help take a lot of load from the application by serving cached responses from the CDN. This will help take off the load from the servers.
+
+## Application Design Considerations
+
+Since this application is fairly straight forward and speed is the name of the game, I used the (Gin Framework)[https://gin-gonic.com/]. I'm also leveraging a database migration tool called [Darwin](https://github.com/GuiaBolso/darwin) to automatically setup the database schema when the application connects to the database.

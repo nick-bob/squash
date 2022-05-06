@@ -60,7 +60,7 @@ func Start(db *sql.DB, ctx context.Context) {
 		if err != nil {
 			panic(err)
 		}
-		c.Redirect(http.StatusMovedPermanently, link.original_url)
+		c.Redirect(http.StatusNotModified, link.original_url)
 	})
 
 	r.Run(":80")
