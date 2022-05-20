@@ -1,6 +1,6 @@
 # Squash
 
-Squash is a simple url shortener program hacked together in a weekend. There is one API endpoint to create new shortened urls, `POST /newurl`.
+Squash is a simple url shortener program hacked together in a week. There is one API endpoint to create new shortened urls, `POST /newurl`.
 
 Then n number of other endpoints to redirect shortened urls.
 
